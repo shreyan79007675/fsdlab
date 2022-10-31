@@ -1,26 +1,71 @@
-const mongoose = require('mongoose')
+const express = require('express')
+const router = express.Router()
+const Alien = require('../models/aliens')
 
 
-const alienSchema = new mongoose.Schema
-({
-
-    name: 
-    {
-        type: String,
-        required: true
-    },
-    tech: 
-    {
-        type: String,
-        required: true
-    },
-    sub: 
+router.get('/', async(req,res) => 
+{
+    try
    {
-        type: String,
-        required: true,
-       
+           const aliens = await Alien.find()
+           res.json(aliens)
+    }catch(err)
+   {
+        res.send('Error ' + err)
+    }
+})
+
+router.get('/:id', async(req,res) => 
+{
+    try
+{
+           const alien = await Alien.findById(req.params.id)
+           res.json(alien)
+    }
+
+
+
+catch(err)
+{
+        res.send('Error ' + err)
+    }
+})
+
+
+router.post('/', async(req,res) => 
+{
+    const alien = new Alien
+   ({
+        name: req.body.name,
+        tech: req.body.tech,
+        sub: req.body.sub
+    })
+
+    try
+   {
+        const a1 =  await alien.save() 
+        res.json(a1)
+    }
+catch(err)
+   {
+        res.send('Error')
+    }
+})
+
+router.patch('/:id',async(req,res)=> 
+{
+    try
+   {
+        const alien = await Alien.findById(req.params.id) 
+        alien.sub = req.body.sub
+        const a1 = await alien.save()
+        res.json(a1)   
+    }
+catch(err)
+   {
+        res.send('Error')
     }
 
 })
 
-module.exports = mongoose.model('Alien',alienSchema)
+module.exports = router
